@@ -1,0 +1,2341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FarmSmart Panchayat Weather MVP</title>
+  <style>
+    /* Hallmark · genre: modern-minimal · macrostructure: Split Studio · tone: official-field · anchor hue: field-green · pre-emit critique: P4 H4 E4 S4 R4 V4 */
+    :root {
+      --field: #eff2ec;
+      --rail: #142520;
+      --rail-soft: #203b34;
+      --leaf: #2d6a4f;
+      --leaf-dark: #173f30;
+      --water: #286b87;
+      --sun: #c27a2c;
+      --soil: #6f5744;
+      --danger: #9e3434;
+      --warning: #a45f22;
+      --ink: #1b211e;
+      --muted: #63706a;
+      --line: #d8ddd4;
+      --surface: #fffefa;
+      --surface-2: #f7f8f3;
+      --soft-green: #ddebe2;
+      --soft-blue: #dcecf0;
+      --soft-yellow: #f6ecd6;
+      --soft-red: #f3dfdc;
+      --shadow: 0 12px 28px rgba(25, 35, 30, 0.09);
+      --auth-paper: oklch(97% 0.014 112);
+      --auth-ink: oklch(19% 0.026 156);
+      --auth-muted: oklch(49% 0.023 154);
+      --auth-rule: oklch(86% 0.018 118);
+      --auth-accent: oklch(72% 0.14 84);
+      --auth-accent-2: oklch(55% 0.09 178);
+      --auth-dark: oklch(18% 0.042 164);
+      --auth-dark-2: oklch(25% 0.05 164);
+      --auth-focus: oklch(72% 0.14 84);
+      --font-display: "Nirmala UI", "Aptos Display", "Segoe UI", sans-serif;
+      --font-body: "Nirmala UI", "Aptos", "Segoe UI", sans-serif;
+      --font-outlier: "Cascadia Mono", "JetBrains Mono", ui-monospace, monospace;
+      --space-2xs: 0.5rem;
+      --space-xs: 0.75rem;
+      --space-sm: 1rem;
+      --space-md: 1.5rem;
+      --space-lg: 2rem;
+      --space-xl: 3rem;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur-short: 180ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      overflow-x: clip;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--field);
+      letter-spacing: 0;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+    }
+
+    .login-view {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 430px);
+      gap: var(--space-lg);
+      align-items: center;
+      padding: var(--space-lg);
+      background:
+        linear-gradient(90deg, var(--auth-dark) 0%, var(--auth-dark) 58%, var(--auth-paper) 58.1%, var(--auth-paper) 100%);
+    }
+
+    .login-brief {
+      display: grid;
+      align-content: center;
+      gap: var(--space-md);
+      max-width: 760px;
+      color: #f7fbf5;
+      padding: var(--space-lg) 0;
+      min-width: 0;
+    }
+
+    .login-brief .brand-mark {
+      margin-bottom: 22px;
+    }
+
+    .login-brief h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 6.75rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+      max-width: 9ch;
+      overflow-wrap: anywhere;
+    }
+
+    .login-brief p {
+      margin: 0;
+      color: rgba(247, 251, 245, 0.78);
+      line-height: 1.55;
+      max-width: 34ch;
+      font-size: 18px;
+    }
+
+    .auth-signature {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, max-content));
+      gap: 10px;
+      margin-top: var(--space-md);
+    }
+
+    .auth-chip {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 0 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(247, 251, 245, 0.78);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      padding: var(--space-md);
+      position: relative;
+      align-self: center;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      top: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--auth-accent-2), var(--auth-accent));
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    }
+
+    .login-card h2 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .login-card p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .auth-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 18px;
+      padding: 4px;
+      border-radius: var(--radius-md);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+    }
+
+    .auth-switch button {
+      min-height: 36px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+    }
+
+    .auth-switch button:hover {
+      transform: translateY(-1px);
+    }
+
+    .auth-switch button:active {
+      transform: translateY(0);
+    }
+
+    .auth-switch button:focus-visible,
+    .primary:focus-visible,
+    .secondary:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid var(--auth-focus);
+      outline-offset: 2px;
+    }
+
+    .auth-switch button.active {
+      background: var(--auth-dark);
+      color: #f5cf81;
+    }
+
+    .login-card label,
+    .login-card select,
+    .login-card input {
+      color: var(--ink);
+    }
+
+    .login-card label {
+      color: var(--muted);
+    }
+
+    .login-card input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 0 11px;
+      outline-color: var(--leaf);
+      font: inherit;
+    }
+
+    .login-note {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    .access-matrix {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .access-row {
+      display: grid;
+      grid-template-columns: 94px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fbfcf7;
+      font-size: 13px;
+    }
+
+    .access-row strong {
+      color: var(--leaf-dark);
+    }
+
+    .access-row span {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .otp-box {
+      display: none;
+      margin: 12px 0 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #edf3ee;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    .otp-box.show {
+      display: block;
+    }
+
+    .otp-code {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 5px 9px;
+      border-radius: 6px;
+      background: var(--rail);
+      color: #f5cf81;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .login-error {
+      display: none;
+      margin: 12px 0 0;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, var(--rail) 0%, #1a302a 100%);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      color: #f7fbf5;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 26px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #e7b75f;
+      color: #17211b;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .brand h1 {
+      font-size: 21px;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: rgba(247, 251, 245, 0.72);
+      font-size: 13px;
+    }
+
+    .user-chip {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .user-chip strong {
+      font-size: 14px;
+    }
+
+    .user-chip span {
+      color: rgba(247, 251, 245, 0.72);
+      font-size: 13px;
+    }
+
+    .logout-button {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background: transparent;
+      color: #f7fbf5;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .control-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: rgba(247, 251, 245, 0.74);
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      color: #f7fbf5;
+      background: var(--rail-soft);
+      padding: 0 11px;
+      outline-color: #e7b75f;
+    }
+
+    main select,
+    .voice-select {
+      color: var(--ink);
+      background: var(--surface);
+      border-color: var(--line);
+      outline-color: var(--leaf);
+    }
+
+    .language {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--rail-soft);
+    }
+
+    .language button {
+      border: 0;
+      background: transparent;
+      padding: 10px 8px;
+      cursor: pointer;
+      color: rgba(247, 251, 245, 0.72);
+    }
+
+    .language button.active {
+      background: #e7b75f;
+      color: #17211b;
+      font-weight: 700;
+    }
+
+    .main {
+      padding: 28px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .topbar h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.45;
+    }
+
+    .risk-badge {
+      min-width: 150px;
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #1f2d29;
+      color: #f5cf81;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: none;
+    }
+
+    .profile-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .profile-item {
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .profile-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .profile-item strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .access-note {
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #edf3ee;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    .data-note {
+      margin: 16px 0 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f5eddc;
+      border: 1px solid #e6d6b8;
+      color: #66533a;
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+    }
+
+    .content-grid {
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      align-items: start;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric {
+      padding: 18px;
+      min-height: 126px;
+    }
+
+    .metric-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .metric-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      background: var(--surface-2);
+      color: var(--leaf-dark);
+    }
+
+    .metric-value {
+      margin: 14px 0 9px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .metric-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .panel h3 {
+      font-size: 18px;
+      margin: 0 0 14px;
+    }
+
+    .alert {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border-radius: 8px;
+      background: var(--soft-red);
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .alert strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--danger);
+    }
+
+    .explain-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+      background: var(--surface-2);
+    }
+
+    .explain-panel h4 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .explain-list {
+      margin: 0 0 14px;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .score-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .score-track {
+      height: 8px;
+      border-radius: 99px;
+      background: #e6e8df;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      width: var(--score);
+      height: 100%;
+      background: linear-gradient(90deg, var(--water), var(--sun));
+    }
+
+    .advice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .advice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 116px;
+    }
+
+    .advice .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 9px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .tag.stop {
+      color: var(--danger);
+      background: var(--soft-red);
+    }
+
+    .tag.wait {
+      color: var(--warning);
+      background: var(--soft-yellow);
+    }
+
+    .tag.good {
+      color: var(--leaf-dark);
+      background: var(--soft-green);
+    }
+
+    .advice h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+
+    .advice p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    .forecast-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .forecast-row {
+      display: grid;
+      grid-template-columns: 64px 34px 1fr 56px;
+      gap: 10px;
+      align-items: center;
+      min-height: 42px;
+    }
+
+    .rain-track {
+      height: 8px;
+      border-radius: 99px;
+      background: #e6e8df;
+      overflow: hidden;
+    }
+
+    .rain-fill {
+      height: 100%;
+      width: var(--rain);
+      background: var(--water);
+    }
+
+    .map-panel {
+      min-height: 280px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(20, 37, 32, 0.10) 1px, transparent 1px),
+        linear-gradient(rgba(20, 37, 32, 0.10) 1px, transparent 1px),
+        #e6ede2;
+      background-size: 42px 42px;
+    }
+
+    .map-route {
+      position: absolute;
+      inset: 18px;
+      border: 2px dashed rgba(45, 106, 79, 0.34);
+      border-radius: 8px;
+      transform: rotate(-2deg);
+    }
+
+    .panchayat-dot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: var(--leaf);
+      box-shadow: 0 0 0 5px rgba(45, 106, 79, 0.22);
+      left: var(--x);
+      top: var(--y);
+    }
+
+    .map-label {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      max-width: calc(100% - 36px);
+      background: rgba(255, 254, 250, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .map-label strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .map-label span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      background: #e5edf0;
+      line-height: 1.45;
+    }
+
+    .message strong {
+      display: block;
+      color: var(--water);
+      margin-bottom: 5px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .voice-tools {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto auto;
+      gap: 10px;
+      align-items: end;
+      margin-top: 16px;
+    }
+
+    .voice-tools label {
+      color: var(--muted);
+    }
+
+    .voice-status {
+      width: 100%;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .primary,
+    .secondary {
+      border-radius: 8px;
+      min-height: 42px;
+      padding: 0 14px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-weight: 700;
+    }
+
+    .primary {
+      background: var(--leaf-dark);
+      color: #fff;
+    }
+
+    .secondary {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--leaf-dark);
+    }
+
+    .scenario-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .scenario-bar button {
+      border: 1px solid var(--line);
+      background: var(--rail-soft);
+      border-radius: 8px;
+      padding: 11px 10px;
+      cursor: pointer;
+      color: rgba(247, 251, 245, 0.78);
+    }
+
+    .scenario-bar button.active {
+      background: #e7b75f;
+      color: #17211b;
+      border-color: #e7b75f;
+      font-weight: 700;
+    }
+
+    .uniqueness-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      margin-top: 16px;
+      align-items: start;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .compare-table th {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .unique-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .unique-list li {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .unique-list b {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .unique-list span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .unique-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--soft-green);
+      color: var(--leaf-dark);
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .login-view {
+        grid-template-columns: 1fr;
+        background: linear-gradient(180deg, var(--rail) 0%, #1b342c 60%, var(--field) 60.1%, var(--field) 100%);
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .metrics,
+      .content-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .profile-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .uniqueness-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .main,
+      .sidebar,
+      .login-view {
+        padding: 16px;
+      }
+
+      .login-brief h1 {
+        font-size: 32px;
+      }
+
+      .auth-signature {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        display: block;
+      }
+
+      .risk-badge {
+        margin-top: 14px;
+        text-align: left;
+      }
+
+      .metrics,
+      .content-grid,
+      .advice-grid,
+      .score-grid,
+      .voice-tools,
+      .scenario-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .forecast-row {
+        grid-template-columns: 54px 30px 1fr 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="login-view" id="login-view">
+    <div class="login-brief">
+      <div>
+        <div class="brand-mark" aria-hidden="true">FS</div>
+        <h1>FarmSmart</h1>
+        <p>Secure crop-weather intelligence for Panchayat teams and registered farmers.</p>
+        <div class="auth-signature" aria-label="Access status">
+          <span class="auth-chip">Madanapalle desk</span>
+          <span class="auth-chip">OTP protected</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="login-card" id="login-form">
+      <h2 id="auth-title">Sign in</h2>
+      <p id="auth-subtitle">Use your registered mobile number to receive an OTP.</p>
+
+      <div class="auth-switch" role="group" aria-label="Authentication mode">
+        <button type="button" class="active" id="signin-tab">Sign in</button>
+        <button type="button" id="signup-tab">Sign up</button>
+      </div>
+
+      <div class="control-group signup-only hidden">
+        <label for="signup-name">Full name</label>
+        <input id="signup-name" name="name" autocomplete="name" placeholder="Enter farmer/officer name">
+      </div>
+
+      <div class="control-group">
+        <label for="login-role">Account type</label>
+        <select id="login-role">
+          <option value="farmer">Farmer</option>
+          <option value="officer">Agriculture officer</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="login-phone">Mobile number</label>
+        <input id="login-phone" name="phone" inputmode="tel" autocomplete="username" placeholder="9876543210">
+      </div>
+
+      <div class="control-group signup-only hidden">
+        <label for="signup-area">Assigned Panchayat / Mandal</label>
+        <select id="signup-area"></select>
+      </div>
+
+      <div class="control-group">
+        <label for="login-otp">OTP</label>
+        <input id="login-otp" name="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="Enter 6-digit OTP" maxlength="6" disabled>
+      </div>
+
+      <button type="submit" class="primary" id="login-submit">Send OTP</button>
+      <div class="otp-box" id="otp-box">
+        OTP generated for this mobile number:
+        <br><span class="otp-code" id="otp-code">000000</span>
+      </div>
+      <div id="recaptcha-container"></div>
+      <div class="login-error" id="login-error" role="alert">Check the registered mobile number and OTP.</div>
+    </form>
+  </section>
+
+  <div class="app hidden" id="app-shell">
+    <aside class="sidebar" aria-label="FarmSmart controls">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">FS</div>
+        <div>
+          <h1>FarmSmart</h1>
+          <p>Panchayat weather + crop advice</p>
+        </div>
+      </div>
+
+      <div class="user-chip">
+        <strong id="user-name">Signed in</strong>
+        <span id="user-role">Farmer account</span>
+        <button type="button" class="logout-button" id="logout">Logout</button>
+      </div>
+
+      <div class="control-group">
+        <label for="state">State</label>
+        <select id="state">
+          <option>Andhra Pradesh</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="district">District</label>
+        <select id="district">
+          <option>Chittoor</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="mandal">Mandal</label>
+        <select id="mandal">
+          <option>Madanapalle</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="panchayat">Panchayat</label>
+        <select id="panchayat"></select>
+      </div>
+
+      <div class="control-group">
+        <label for="crop">Crop</label>
+        <select id="crop"></select>
+      </div>
+
+      <div class="control-group">
+        <label>Language</label>
+        <div class="language" role="group" aria-label="Language">
+          <button type="button" class="active" data-lang="en">English</button>
+          <button type="button" data-lang="te">Telugu</button>
+        </div>
+      </div>
+
+      <div class="scenario-bar" aria-label="Fallback scenarios">
+        <button type="button" class="active" data-scenario="rain">Rain risk</button>
+        <button type="button" data-scenario="dry">Dry soil</button>
+        <button type="button" data-scenario="wind">Wind alert</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <h2 id="page-title">Hyperlocal crop decision support</h2>
+          <p id="page-subtitle">Select a Panchayat and crop to generate weather-aware farming recommendations for the next 24 hours.</p>
+        </div>
+        <div class="risk-badge" id="risk-badge">Risk: HIGH</div>
+      </section>
+
+      <section class="profile-strip" aria-label="Account details">
+        <article class="profile-item">
+          <span>Account holder</span>
+          <strong id="profile-name">Ramesh Kumar</strong>
+        </article>
+        <article class="profile-item">
+          <span>Access level</span>
+          <strong id="profile-access">Farmer dashboard</strong>
+        </article>
+        <article class="profile-item">
+          <span>Assigned area</span>
+          <strong id="profile-area">Nimmanapalle Panchayat</strong>
+        </article>
+      </section>
+
+      <p class="access-note" id="access-note">Role and mobile number are checked together. A farmer number cannot open the agriculture officer dashboard.</p>
+      <p class="data-note" id="data-note">Weather mode: fallback scenarios. Click “Load live weather” to fetch original forecast data from Open-Meteo for the selected Panchayat coordinates.</p>
+      <div class="actions" style="margin-bottom: 16px;">
+        <button type="button" class="secondary" id="live-weather">Load live weather</button>
+        <button type="button" class="secondary" id="fallback-weather">Use fallback scenarios</button>
+      </div>
+
+      <section class="grid metrics" aria-label="Weather metrics">
+        <article class="card metric">
+          <div class="metric-title"><span>Temperature</span><span class="metric-icon" aria-hidden="true">°C</span></div>
+          <div class="metric-value" id="temp">31°C</div>
+          <div class="metric-note" id="temp-note">Warm conditions for tomato farms.</div>
+        </article>
+        <article class="card metric">
+          <div class="metric-title"><span>Rain probability</span><span class="metric-icon" aria-hidden="true">%</span></div>
+          <div class="metric-value" id="rain">86%</div>
+          <div class="metric-note" id="rain-note">Heavy rain likely in the evening.</div>
+        </article>
+        <article class="card metric">
+          <div class="metric-title"><span>Humidity</span><span class="metric-icon" aria-hidden="true">H</span></div>
+          <div class="metric-value" id="humidity">91%</div>
+          <div class="metric-note" id="humidity-note">High fungal disease risk.</div>
+        </article>
+        <article class="card metric">
+          <div class="metric-title"><span>Soil moisture</span><span class="metric-icon" aria-hidden="true">S</span></div>
+          <div class="metric-value" id="soil">74%</div>
+          <div class="metric-note" id="soil-note">Enough water available in top soil.</div>
+        </article>
+      </section>
+
+      <section class="grid content-grid">
+        <article class="card panel">
+          <h3>Today&apos;s advice</h3>
+          <div class="alert" role="alert">
+            <div aria-hidden="true">!</div>
+            <div>
+              <strong id="alert-title">Heavy rainfall risk is high</strong>
+              <span id="alert-body">Avoid irrigation and spraying until leaves dry after the rainfall window.</span>
+            </div>
+          </div>
+
+          <div class="explain-panel">
+            <h4 id="why-title">Why this advice?</h4>
+            <ul class="explain-list" id="explain-list"></ul>
+            <div class="score-grid" id="score-grid" aria-label="Risk index"></div>
+          </div>
+
+          <div class="advice-grid" id="advice-grid"></div>
+
+          <div class="message" aria-live="polite">
+            <strong id="message-title">Farmer alert message</strong>
+            <span id="message-text">Heavy rainfall is expected between 2 PM and 7 PM. Do not irrigate tomato fields today. Avoid pesticide spraying and check drainage channels.</span>
+          </div>
+
+          <div class="voice-tools">
+            <div>
+              <label for="voice-select" id="voice-label">Voice</label>
+              <select id="voice-select" class="voice-select">
+                <option value="">Auto-select voice</option>
+              </select>
+            </div>
+            <button type="button" class="primary" id="speak">Play voice alert</button>
+            <button type="button" class="secondary" id="copy">Copy alert text</button>
+          </div>
+          <p class="voice-status" id="voice-status">Voice uses your browser voices. Telugu mode will prefer Telugu or Indian voices when available.</p>
+        </article>
+
+        <aside class="grid">
+          <article class="card panel map-panel" aria-label="Panchayat map mockup">
+            <div class="map-route" aria-hidden="true"></div>
+            <div class="panchayat-dot" id="dot" aria-hidden="true"></div>
+            <div class="map-label">
+              <strong id="map-name">Panchayat: Nimmanapalle</strong>
+              <span id="map-meta">13.550°N, 78.500°E · Red loamy soil · Tomato, Groundnut</span>
+            </div>
+          </article>
+
+          <article class="card panel">
+            <h3>Next 24 hours</h3>
+            <div class="forecast-list" id="forecast-list"></div>
+          </article>
+        </aside>
+      </section>
+
+      <section class="grid uniqueness-grid">
+        <article class="card panel">
+          <h3 id="compare-title">Nearby Panchayat comparison</h3>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Panchayat</th>
+                <th>Rain</th>
+                <th>Soil</th>
+                <th>Advice</th>
+              </tr>
+            </thead>
+            <tbody id="compare-body"></tbody>
+          </table>
+        </article>
+
+        <article class="card panel">
+          <h3 id="unique-title">What makes this unique</h3>
+          <ul class="unique-list">
+            <li>
+              <span class="unique-mark">1</span>
+              <span><b id="unique-one-title">Panchayat-level decision support</b><span id="unique-one-body">The system compares nearby Panchayats instead of giving one district-level forecast.</span></span>
+            </li>
+            <li>
+              <span class="unique-mark">2</span>
+              <span><b id="unique-two-title">Crop-specific action</b><span id="unique-two-body">Weather becomes irrigation, spraying, disease-risk and field-action advice.</span></span>
+            </li>
+            <li>
+              <span class="unique-mark">3</span>
+              <span><b id="unique-three-title">Transparent decision logic</b><span id="unique-three-body">The farmer and judge can see why each recommendation was generated.</span></span>
+            </li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./firebase-config.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+    const config = window.FARMSMART_FIREBASE_CONFIG || {};
+    const configured = Boolean(config.apiKey && config.authDomain && config.projectId && config.appId);
+
+    window.FarmSmartFirebase = {
+      configured,
+      auth: null,
+      recaptchaVerifier: null,
+      confirmationResult: null,
+      async init() {
+        if (!configured || this.auth) return configured;
+        const app = initializeApp(config);
+        this.auth = getAuth(app);
+        this.auth.languageCode = "en";
+        this.recaptchaVerifier = new RecaptchaVerifier(this.auth, "recaptcha-container", {
+          size: "invisible"
+        });
+        await this.recaptchaVerifier.render();
+        return true;
+      },
+      async sendOtp(phone, languageCode) {
+        await this.init();
+        if (!this.auth || !this.recaptchaVerifier) {
+          throw new Error("Firebase is not configured");
+        }
+        this.auth.languageCode = languageCode || "en";
+        const formattedPhone = phone.startsWith("+") ? phone : `+91${phone}`;
+        try {
+          this.confirmationResult = await signInWithPhoneNumber(this.auth, formattedPhone, this.recaptchaVerifier);
+        } catch (error) {
+          console.error("Firebase phone OTP send failed", {
+            code: error && error.code,
+            message: error && error.message,
+            customData: error && error.customData
+          });
+          throw error;
+        }
+      },
+      async verifyOtp(code) {
+        if (!this.confirmationResult) {
+          throw new Error("OTP request was not started");
+        }
+        return this.confirmationResult.confirm(code);
+      }
+    };
+  </script>
+  <script>
+    const panchayats = [
+      {
+        id: "nimmanapalle",
+        name: "Nimmanapalle",
+        coords: "13.550°N, 78.500°E",
+        soilType: "Red loamy soil",
+        crops: ["Tomato", "Groundnut", "Paddy"],
+        latitude: 13.55,
+        longitude: 78.50,
+        x: "56%",
+        y: "40%"
+      },
+      {
+        id: "kurabalakota",
+        name: "Kurabalakota",
+        coords: "13.650°N, 78.480°E",
+        soilType: "Sandy loam",
+        crops: ["Groundnut", "Tomato", "Chilli"],
+        latitude: 13.65,
+        longitude: 78.48,
+        x: "38%",
+        y: "31%"
+      },
+      {
+        id: "basinikonda",
+        name: "Basinikonda",
+        coords: "13.566°N, 78.510°E",
+        soilType: "Black cotton soil",
+        crops: ["Paddy", "Tomato", "Cotton"],
+        latitude: 13.566,
+        longitude: 78.51,
+        x: "68%",
+        y: "58%"
+      }
+    ];
+
+    const scenarios = {
+      rain: {
+        risk: "HIGH",
+        temp: 29,
+        rain: 86,
+        humidity: 91,
+        soil: 74,
+        wind: 18,
+        headline: "Heavy rainfall risk is high",
+        body: "Avoid irrigation and spraying until leaves dry after the rainfall window.",
+        forecast: [
+          ["08 AM", "Cloudy", 28], ["11 AM", "Humid", 45], ["02 PM", "Rain", 82],
+          ["05 PM", "Heavy rain", 88], ["08 PM", "Rain", 71], ["11 PM", "Cloudy", 35]
+        ]
+      },
+      dry: {
+        risk: "MEDIUM",
+        temp: 34,
+        rain: 18,
+        humidity: 48,
+        soil: 24,
+        wind: 11,
+        headline: "Soil moisture is low",
+        body: "Irrigation may be required in the morning or evening depending on crop stage.",
+        forecast: [
+          ["08 AM", "Sunny", 5], ["11 AM", "Sunny", 8], ["02 PM", "Hot", 12],
+          ["05 PM", "Dry", 18], ["08 PM", "Clear", 9], ["11 PM", "Clear", 4]
+        ]
+      },
+      wind: {
+        risk: "MEDIUM",
+        temp: 31,
+        rain: 42,
+        humidity: 70,
+        soil: 43,
+        wind: 34,
+        headline: "Strong wind warning",
+        body: "Avoid spraying today because drift risk is high. Secure young crop supports.",
+        forecast: [
+          ["08 AM", "Breezy", 25], ["11 AM", "Windy", 35], ["02 PM", "Cloudy", 42],
+          ["05 PM", "Windy", 39], ["08 PM", "Cloudy", 28], ["11 PM", "Calm", 15]
+        ]
+      }
+    };
+
+    const cropRules = {
+      Tomato: {
+        disease: "High humidity can increase fungal disease risk in tomato.",
+        drainage: "Clear furrows and check standing water near tomato roots.",
+        teluguCrop: "టమోటా"
+      },
+      Groundnut: {
+        disease: "Waterlogging may damage groundnut pods and root health.",
+        drainage: "Avoid water stagnation and check drainage after rainfall.",
+        teluguCrop: "వేరుశెనగ"
+      },
+      Paddy: {
+        disease: "Watch for blast risk when humidity remains high.",
+        drainage: "Maintain controlled water level; avoid sudden excess flow.",
+        teluguCrop: "వరి"
+      },
+      Chilli: {
+        disease: "High humidity can increase fruit rot and leaf spot risk.",
+        drainage: "Delay spraying until leaves dry and wind speed reduces.",
+        teluguCrop: "మిరప"
+      },
+      Cotton: {
+        disease: "Wet and windy conditions can stress young cotton plants.",
+        drainage: "Check field drainage and avoid foliar spray during wind.",
+        teluguCrop: "పత్తి"
+      }
+    };
+
+    let currentScenario = "rain";
+    let currentLang = "en";
+    let availableVoices = [];
+    let pendingOtp = null;
+    let authMode = "signin";
+    let liveWeather = null;
+
+    const seededUsers = {
+      farmer: {
+        phone: "9876543210",
+        name: "Ramesh Kumar",
+        role: "Farmer",
+        panchayat: "nimmanapalle",
+        seededOtp: "246810",
+        access: "Farmer dashboard",
+        area: "Nimmanapalle Panchayat",
+        note: "Farmer access is limited to crop advice, weather alerts and voice messages for the assigned Panchayat."
+      },
+      officer: {
+        phone: "9000011111",
+        name: "Anitha Reddy",
+        role: "Agriculture Officer",
+        panchayat: "kurabalakota",
+        seededOtp: "135790",
+        access: "Officer monitoring dashboard",
+        area: "Madanapalle Mandal",
+        note: "Officer access can monitor multiple Panchayats, compare risk and prepare advisories for farmers."
+      }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const loginView = $("login-view");
+    const appShell = $("app-shell");
+    const loginForm = $("login-form");
+    const loginError = $("login-error");
+    const signupArea = $("signup-area");
+    const panchayatSelect = $("panchayat");
+    const cropSelect = $("crop");
+    const voiceSelect = $("voice-select");
+    const adviceGrid = $("advice-grid");
+    const forecastList = $("forecast-list");
+    const explainList = $("explain-list");
+    const scoreGrid = $("score-grid");
+    const compareBody = $("compare-body");
+    const dot = $("dot");
+
+    function init() {
+      loginForm.addEventListener("submit", handleLogin);
+      $("logout").addEventListener("click", logout);
+      $("signin-tab").addEventListener("click", () => setAuthMode("signin"));
+      $("signup-tab").addEventListener("click", () => setAuthMode("signup"));
+      $("login-role").addEventListener("change", () => {
+        resetOtpForm();
+        updateSignupAreaOptions();
+      });
+      $("login-phone").addEventListener("input", resetOtpForm);
+      $("live-weather").addEventListener("click", loadLiveWeather);
+      $("fallback-weather").addEventListener("click", () => {
+        liveWeather = null;
+        $("data-note").textContent = "Weather mode: fallback scenarios. Click “Load live weather” to fetch original forecast data from Open-Meteo for the selected Panchayat coordinates.";
+        updateDashboard();
+      });
+
+      panchayats.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.id;
+        option.textContent = item.name;
+        panchayatSelect.appendChild(option);
+      });
+      updateSignupAreaOptions();
+
+      updateCropOptions();
+      updateDashboard();
+
+      panchayatSelect.addEventListener("change", () => {
+        liveWeather = null;
+        $("data-note").textContent = "Weather mode: fallback scenarios. Click “Load live weather” to fetch original forecast data from Open-Meteo for the selected Panchayat coordinates.";
+        updateCropOptions();
+        updateDashboard();
+      });
+      cropSelect.addEventListener("change", updateDashboard);
+
+      document.querySelectorAll("[data-scenario]").forEach((button) => {
+        button.addEventListener("click", () => {
+        currentScenario = button.dataset.scenario;
+          liveWeather = null;
+          document.querySelectorAll("[data-scenario]").forEach((item) => item.classList.toggle("active", item === button));
+          updateDashboard();
+        });
+      });
+
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.addEventListener("click", () => {
+          currentLang = button.dataset.lang;
+          document.querySelectorAll("[data-lang]").forEach((item) => item.classList.toggle("active", item === button));
+          updateDashboard();
+          loadVoices();
+        });
+      });
+
+      $("speak").addEventListener("click", speakAlert);
+      $("copy").addEventListener("click", copyAlert);
+      voiceSelect.addEventListener("change", updateVoiceStatus);
+      loadVoices();
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+      restoreSession();
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const role = $("login-role").value;
+      const phone = $("login-phone").value.trim();
+      const otp = $("login-otp").value.trim();
+
+      if (!isValidPhone(phone)) {
+        loginError.classList.add("show");
+        loginError.textContent = "Enter a valid 10-digit mobile number.";
+        return;
+      }
+
+      const user = authMode === "signup" ? buildSignupUser(role, phone) : findUser(role, phone);
+
+      if (!user) {
+        if (authMode === "signin") {
+          setAuthMode("signup", { keepError: true });
+          $("login-role").value = role;
+          $("login-phone").value = phone;
+          updateSignupAreaOptions();
+          loginError.classList.add("show");
+          loginError.textContent = "This mobile number is not registered yet. Complete sign up once, then OTP login will work.";
+        }
+        return;
+      }
+
+      if (!pendingOtp || pendingOtp.role !== role || pendingOtp.phone !== phone) {
+        await startOtpRequest(role, phone, user);
+        return;
+      }
+
+      const verified = await verifyOtpCode(otp);
+      if (!verified) {
+        loginError.classList.add("show");
+        return;
+      }
+
+      pendingOtp = null;
+      if (authMode === "signup") {
+        saveRegisteredUser(user);
+      }
+      loginError.classList.remove("show");
+      sessionStorage.setItem("farmsmartUser", JSON.stringify({ role, phone }));
+      openDashboard(user);
+    }
+
+    async function startOtpRequest(role, phone, user) {
+      loginError.classList.remove("show");
+      $("login-submit").textContent = "Sending...";
+      $("login-submit").disabled = true;
+
+      const firebaseAuth = window.FarmSmartFirebase;
+      const useFirebase = Boolean(firebaseAuth && firebaseAuth.configured);
+      try {
+        if (useFirebase) {
+          await firebaseAuth.sendOtp(phone, currentLang === "te" ? "te" : "en");
+          pendingOtp = { role, phone, user, provider: "firebase" };
+          $("otp-code").textContent = "Sent by SMS";
+          $("otp-box").classList.add("show");
+        } else {
+          const code = generateOtp();
+          pendingOtp = { role, phone, code, user, provider: "local" };
+          $("otp-code").textContent = code;
+          $("otp-box").classList.add("show");
+        }
+        $("login-otp").disabled = false;
+        $("login-otp").focus();
+        $("login-submit").textContent = "Verify OTP";
+      } catch (error) {
+        pendingOtp = null;
+        console.error("OTP send error shown to user", {
+          code: error && error.code,
+          message: error && error.message,
+          customData: error && error.customData
+        });
+        if (useFirebase && shouldUseLocalOtpFallback(error)) {
+          const code = generateOtp();
+          pendingOtp = { role, phone, code, user, provider: "local" };
+          $("otp-code").textContent = code;
+          $("otp-box").classList.add("show");
+          $("login-otp").disabled = false;
+          $("login-otp").focus();
+          $("login-submit").textContent = "Verify OTP";
+          loginError.classList.add("show");
+          loginError.textContent = `${firebaseErrorMessage(error, "send")} Free demo mode is active: use the OTP shown above.`;
+          return;
+        }
+        loginError.classList.add("show");
+        loginError.textContent = firebaseErrorMessage(error, "send");
+        $("login-submit").textContent = "Send OTP";
+      } finally {
+        $("login-submit").disabled = false;
+      }
+    }
+
+    async function verifyOtpCode(otp) {
+      if (!pendingOtp) return false;
+      if (pendingOtp.provider === "firebase") {
+        try {
+          await window.FarmSmartFirebase.verifyOtp(otp);
+          return true;
+        } catch (error) {
+          loginError.textContent = firebaseErrorMessage(error, "verify");
+          return false;
+        }
+      }
+      if (otp !== pendingOtp.code) {
+        loginError.textContent = "Invalid OTP. Use the OTP shown above.";
+        return false;
+      }
+      return true;
+    }
+
+    function firebaseErrorMessage(error, phase) {
+      const code = error && error.code ? error.code : "";
+      const details = firebaseErrorDetails(error);
+      const withDetails = (message) => details ? `${message} ${details}` : message;
+      if (code.includes("invalid-phone-number")) {
+        return withDetails("Invalid phone number. Use a valid Indian mobile number with +91 or 10 digits.");
+      }
+      if (code.includes("invalid-verification-code")) {
+        return withDetails("Invalid OTP. Check the SMS code and try again.");
+      }
+      if (code.includes("code-expired")) {
+        return withDetails("OTP expired. Send a new OTP.");
+      }
+      if (code.includes("too-many-requests") || code.includes("quota-exceeded")) {
+        return withDetails("Too many OTP requests. Wait for some time before trying again.");
+      }
+      if (code.includes("captcha-check-failed") || code.includes("missing-app-credential")) {
+        return withDetails("reCAPTCHA failed. Run the app on localhost or an authorized Firebase domain.");
+      }
+      if (code.includes("operation-not-allowed")) {
+        return withDetails("Phone sign-in is not enabled in Firebase Authentication.");
+      }
+      if (phase === "send") {
+        return withDetails("SMS OTP could not be sent. Check Firebase config, authorized domain, Phone Auth provider and SMS region settings.");
+      }
+      return withDetails("OTP verification failed. Check the code and try again.");
+    }
+
+    function shouldUseLocalOtpFallback(error) {
+      const code = error && error.code ? error.code : "";
+      return code.includes("billing-not-enabled") || code.includes("internal-error");
+    }
+
+    function firebaseErrorDetails(error) {
+      if (!error) return "";
+      const parts = [];
+      if (error.code) parts.push(`code: ${error.code}`);
+      if (error.message) parts.push(`message: ${error.message}`);
+      if (error.customData) parts.push(`customData: ${safeJson(error.customData)}`);
+      return parts.length ? `Firebase error details: ${parts.join(" | ")}` : "";
+    }
+
+    function safeJson(value) {
+      try {
+        return JSON.stringify(value);
+      } catch (error) {
+        return String(value);
+      }
+    }
+
+    function setAuthMode(mode, options = {}) {
+      authMode = mode;
+      $("signin-tab").classList.toggle("active", mode === "signin");
+      $("signup-tab").classList.toggle("active", mode === "signup");
+      document.querySelectorAll(".signup-only").forEach((item) => item.classList.toggle("hidden", mode !== "signup"));
+      $("auth-title").textContent = mode === "signup" ? "Create account" : "Sign in";
+      $("auth-subtitle").textContent = mode === "signup"
+        ? "Create a role-linked profile, then verify the mobile number with OTP."
+        : "Use your registered mobile number to receive an OTP.";
+      resetOtpForm(options);
+    }
+
+    function findUser(role, phone) {
+      const seeded = seededUsers[role];
+      if (seeded && seeded.phone === phone) return seeded;
+      return getRegisteredUsers().find((user) => user.roleKey === role && user.phone === phone) || null;
+    }
+
+    function buildSignupUser(role, phone) {
+      const name = $("signup-name").value.trim();
+      const panchayat = panchayats.find((item) => item.id === signupArea.value) || panchayats[0];
+      if (!name) {
+        loginError.classList.add("show");
+        loginError.textContent = "Enter a name to create the account.";
+        return null;
+      }
+      if (findUser(role, phone)) {
+        loginError.classList.add("show");
+        loginError.textContent = "This mobile number is already registered for the selected role. Use sign in.";
+        return null;
+      }
+
+      const isOfficer = role === "officer";
+      return {
+        roleKey: role,
+        phone,
+        name,
+        role: isOfficer ? "Agriculture Officer" : "Farmer",
+        panchayat: panchayat.id,
+        access: isOfficer ? "Officer monitoring dashboard" : "Farmer dashboard",
+        area: isOfficer ? "Assigned mandal: Madanapalle" : `${panchayat.name} Panchayat`,
+        note: isOfficer
+          ? "Officer access can monitor multiple Panchayats, compare risk and prepare advisories for farmers."
+          : "Farmer access is limited to crop advice, weather alerts and voice messages for the assigned Panchayat."
+      };
+    }
+
+    function getRegisteredUsers() {
+      try {
+        return JSON.parse(localStorage.getItem("farmsmartRegisteredUsers") || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveRegisteredUser(user) {
+      const users = getRegisteredUsers();
+      users.push(user);
+      localStorage.setItem("farmsmartRegisteredUsers", JSON.stringify(users));
+    }
+
+    function generateOtp() {
+      return String(Math.floor(100000 + Math.random() * 900000));
+    }
+
+    function isValidPhone(phone) {
+      return /^[6-9]\d{9}$/.test(phone);
+    }
+
+    function updateSignupAreaOptions() {
+      if (!signupArea) return;
+      const role = $("login-role").value;
+      signupArea.innerHTML = "";
+      panchayats.forEach((panchayat) => {
+        const option = document.createElement("option");
+        option.value = panchayat.id;
+        option.textContent = role === "officer" ? `Madanapalle Mandal - ${panchayat.name} cluster` : `${panchayat.name} Panchayat`;
+        signupArea.appendChild(option);
+      });
+    }
+
+    function restoreSession() {
+      const saved = sessionStorage.getItem("farmsmartUser");
+      if (!saved) return;
+
+      try {
+        const session = JSON.parse(saved);
+        const user = findUser(session.role, session.phone);
+        if (user) {
+          openDashboard(user);
+        }
+      } catch (error) {
+        sessionStorage.removeItem("farmsmartUser");
+      }
+    }
+
+    function openDashboard(user) {
+      loginView.classList.add("hidden");
+      appShell.classList.remove("hidden");
+      $("user-name").textContent = user.name;
+      $("user-role").textContent = user.role;
+      $("profile-name").textContent = `${user.name} · ${user.phone}`;
+      $("profile-access").textContent = user.access;
+      $("profile-area").textContent = user.area;
+      $("access-note").textContent = user.note;
+      panchayatSelect.value = user.panchayat;
+      updateCropOptions();
+      updateDashboard();
+    }
+
+    function logout() {
+      sessionStorage.removeItem("farmsmartUser");
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      appShell.classList.add("hidden");
+      loginView.classList.remove("hidden");
+      resetOtpForm();
+    }
+
+    function resetOtpForm(options = {}) {
+      pendingOtp = null;
+      $("login-otp").value = "";
+      $("login-otp").disabled = true;
+      $("login-submit").textContent = "Send OTP";
+      $("otp-box").classList.remove("show");
+      if (!options.keepError) {
+        loginError.classList.remove("show");
+      }
+    }
+
+    function updateCropOptions() {
+      const panchayat = getPanchayat();
+      cropSelect.innerHTML = "";
+      panchayat.crops.forEach((crop) => {
+        const option = document.createElement("option");
+        option.value = crop;
+        option.textContent = crop;
+        cropSelect.appendChild(option);
+      });
+    }
+
+    function getPanchayat() {
+      return panchayats.find((item) => item.id === panchayatSelect.value) || panchayats[0];
+    }
+
+    function getCrop() {
+      return cropRules[cropSelect.value] || cropRules.Tomato;
+    }
+
+    function updateDashboard() {
+      const panchayat = getPanchayat();
+      const cropName = cropSelect.value || panchayat.crops[0];
+      const crop = getCrop();
+      const weather = liveWeather || scenarios[currentScenario];
+      const highRain = weather.rain >= 70;
+      const lowSoil = weather.soil <= 30;
+      const highWind = weather.wind >= 28;
+      const highHumidity = weather.humidity >= 82;
+
+      $("risk-badge").textContent = label("Risk", "ప్రమాద స్థాయి") + ": " + riskLabel(weather.risk);
+      $("temp").textContent = weather.temp + "°C";
+      $("rain").textContent = weather.rain + "%";
+      $("humidity").textContent = weather.humidity + "%";
+      $("soil").textContent = weather.soil + "%";
+
+      $("temp-note").textContent = currentLang === "te" ? "పంట పెరుగుదల కోసం ఉష్ణోగ్రతను గమనించండి." : "Monitor temperature for crop stress.";
+      $("rain-note").textContent = highRain
+        ? text("Heavy rain likely in the next 6 hours.", "రాబోయే 6 గంటల్లో భారీ వర్షం వచ్చే అవకాశం ఉంది.")
+        : text("Low rainfall chance for this Panchayat.", "ఈ పంచాయతీలో వర్షం అవకాశం తక్కువగా ఉంది.");
+      $("humidity-note").textContent = highHumidity
+        ? text("High fungal disease risk.", "ఫంగల్ వ్యాధి ప్రమాదం ఎక్కువగా ఉంది.")
+        : text("Humidity is within a manageable range.", "తేమ నియంత్రణలో ఉంది.");
+      $("soil-note").textContent = lowSoil
+        ? text("Soil is dry; irrigation may be needed.", "నేల పొడిగా ఉంది; నీరు అవసరం కావచ్చు.")
+        : text("Enough water available in top soil.", "పైన నేలలో తగినంత తేమ ఉంది.");
+
+      $("alert-title").textContent = text(weather.headline, headlineTelugu(weather, crop));
+      $("alert-body").textContent = text(weather.body, bodyTelugu(weather));
+      $("message-title").textContent = label("Farmer alert message", "రైతు హెచ్చరిక సందేశం");
+      $("message-text").textContent = buildAlertText(weather, cropName, crop, panchayat.name);
+      $("voice-label").textContent = label("Voice", "వాయిస్");
+      $("speak").textContent = label("Play voice alert", "వాయిస్ హెచ్చరిక వినండి");
+      $("copy").textContent = label("Copy alert text", "హెచ్చరికను కాపీ చేయండి");
+      updateVoiceStatus();
+
+      $("page-title").textContent = currentLang === "te"
+        ? "హైపర్‌లోకల్ పంట నిర్ణయ సహాయం"
+        : "Hyperlocal crop decision support";
+      $("page-subtitle").textContent = currentLang === "te"
+        ? `${panchayat.name} పంచాయతీకి ${crop.teluguCrop} పంట కోసం వాతావరణ ఆధారిత సలహా.`
+        : `Weather-aware recommendations for ${cropName} farms in ${panchayat.name} Panchayat.`;
+
+      $("map-name").textContent = label("Panchayat", "పంచాయతీ") + ": " + panchayat.name;
+      $("map-meta").textContent = `${panchayat.coords} · ${panchayat.soilType} · ${panchayat.crops.join(", ")}`;
+      dot.style.setProperty("--x", panchayat.x);
+      dot.style.setProperty("--y", panchayat.y);
+
+      renderAdvice({ highRain, lowSoil, highWind, highHumidity, crop, cropName, weather });
+      renderForecast(weather.forecast);
+      renderExplain({ highRain, lowSoil, highWind, highHumidity, cropName, weather });
+      renderComparison(panchayat.id, cropName);
+      renderUniqueText();
+    }
+
+    async function loadLiveWeather() {
+      const panchayat = getPanchayat();
+      $("data-note").textContent = `Fetching original Open-Meteo forecast for ${panchayat.name} (${panchayat.latitude}, ${panchayat.longitude})...`;
+
+      const params = new URLSearchParams({
+        latitude: panchayat.latitude,
+        longitude: panchayat.longitude,
+        current: "temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m",
+        hourly: "temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,wind_speed_10m,soil_moisture_0_1cm",
+        forecast_days: "1",
+        timezone: "auto",
+        wind_speed_unit: "kmh",
+        precipitation_unit: "mm"
+      });
+
+      try {
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error("Weather API request failed");
+        }
+
+        const data = await response.json();
+        liveWeather = buildWeatherFromOpenMeteo(data);
+        $("data-note").textContent = `Weather mode: live Open-Meteo forecast loaded for ${panchayat.name}. Administrative village lists must be imported from official LGD/Census data for full accuracy.`;
+        updateDashboard();
+      } catch (error) {
+        liveWeather = null;
+        $("data-note").textContent = "Live weather could not be loaded. Check internet access, then try again. The dashboard is showing fallback scenarios.";
+        updateDashboard();
+      }
+    }
+
+    function buildWeatherFromOpenMeteo(data) {
+      const current = data.current || {};
+      const hourly = data.hourly || {};
+      const rainSeries = hourly.precipitation_probability || [0];
+      const humiditySeries = hourly.relative_humidity_2m || [current.relative_humidity_2m || 0];
+      const windSeries = hourly.wind_speed_10m || [current.wind_speed_10m || 0];
+      const soilSeries = hourly.soil_moisture_0_1cm || [0.25];
+      const tempSeries = hourly.temperature_2m || [current.temperature_2m || 0];
+
+      const maxRain = Math.round(Math.max(...rainSeries.slice(0, 24).filter((value) => Number.isFinite(value)), 0));
+      const maxHumidity = Math.round(Math.max(...humiditySeries.slice(0, 24).filter((value) => Number.isFinite(value)), current.relative_humidity_2m || 0));
+      const maxWind = Math.round(Math.max(...windSeries.slice(0, 24).filter((value) => Number.isFinite(value)), current.wind_speed_10m || 0));
+      const soilMoisture = Math.round(((soilSeries.find((value) => Number.isFinite(value)) || 0.25) / 0.5) * 100);
+      const temp = Math.round(current.temperature_2m || tempSeries[0] || 0);
+
+      const forecast = (hourly.time || []).slice(0, 6).map((time, index) => {
+        const label = new Date(time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const rain = Math.round(rainSeries[index] || 0);
+        const condition = rain >= 70 ? "Rain" : rain >= 35 ? "Cloudy" : "Clear";
+        return [label, condition, rain];
+      });
+
+      return {
+        risk: maxRain >= 70 || maxHumidity >= 88 ? "HIGH" : "MEDIUM",
+        temp,
+        rain: maxRain,
+        humidity: maxHumidity,
+        soil: clamp(soilMoisture),
+        wind: maxWind,
+        headline: maxRain >= 70 ? "Live forecast shows high rainfall risk" : "Live forecast loaded",
+        body: maxRain >= 70
+          ? "Use live weather data before irrigation or spraying decisions."
+          : "Review soil moisture, humidity and wind before field action.",
+        forecast: forecast.length ? forecast : scenarios[currentScenario].forecast
+      };
+    }
+
+    function renderAdvice(state) {
+      const irrigation = state.highRain
+        ? ["stop", label("Avoid irrigation", "నీరు పెట్టవద్దు"), text("Rain and soil moisture are already high.", "వర్షం మరియు నేల తేమ ఇప్పటికే ఎక్కువగా ఉన్నాయి.")]
+        : state.lowSoil
+          ? ["good", label("Irrigate carefully", "జాగ్రత్తగా నీరు పెట్టండి"), text("Use controlled irrigation during cooler hours.", "చల్లని సమయంలో నియంత్రిత నీరుపారుదల చేయండి.")]
+          : ["wait", label("Wait and observe", "వేచి గమనించండి"), text("Soil moisture is moderate; recheck later.", "నేల తేమ మధ్యస్థంగా ఉంది; తరువాత మళ్లీ చూడండి.")];
+
+      const spraying = state.highRain || state.highWind
+        ? ["stop", label("Avoid spraying", "స్ప్రే చేయవద్దు"), text("Rain or wind can wash away chemicals or cause drift.", "వర్షం లేదా గాలి స్ప్రే ప్రభావాన్ని తగ్గించవచ్చు.")]
+        : ["good", label("Spraying is possible", "స్ప్రే చేయవచ్చు"), text("Prefer early morning with low wind.", "గాలి తక్కువగా ఉన్న ఉదయం సమయం మంచిది.")];
+
+      const disease = state.highHumidity
+        ? ["wait", label("Disease risk high", "వ్యాధి ప్రమాదం ఎక్కువ"), text(state.crop.disease, "అధిక తేమ వల్ల పంటలో ఫంగల్ వ్యాధి ప్రమాదం పెరుగుతుంది.")]
+        : ["good", label("Disease risk low", "వ్యాధి ప్రమాదం తక్కువ"), text("Weather does not currently indicate high disease pressure.", "ప్రస్తుత వాతావరణం అధిక వ్యాధి ఒత్తిడిని చూపడం లేదు.")];
+
+      const action = state.highRain
+        ? ["good", label("Check drainage", "డ్రైనేజీ చూడండి"), text(state.crop.drainage, "వర్షం తరువాత నీరు నిల్వ కాకుండా డ్రైనేజీ చూడండి.")]
+        : state.highWind
+          ? ["wait", label("Secure supports", "ఆధారాలు బిగించండి"), text("Support young plants and postpone field spraying.", "చిన్న మొక్కలకు ఆధారం ఇచ్చి స్ప్రేను వాయిదా వేయండి.")]
+          : ["good", label("Field visit", "పొలం పరిశీలించండి"), text("Inspect crop condition and soil before the next irrigation.", "తదుపరి నీరుపారుదల ముందు పంట మరియు నేలను పరిశీలించండి.")];
+
+      const cards = [
+        [label("Irrigation", "నీరు"), irrigation],
+        [label("Spraying", "స్ప్రే"), spraying],
+        [label("Crop risk", "పంట ప్రమాదం"), disease],
+        [label("Recommended action", "సిఫార్సు చేసిన చర్య"), action]
+      ];
+
+      adviceGrid.innerHTML = "";
+      cards.forEach(([title, item]) => {
+        const article = document.createElement("article");
+        article.className = "advice";
+        article.innerHTML = `
+          <span class="tag ${item[0]}">${item[1]}</span>
+          <h4>${title}</h4>
+          <p>${item[2]}</p>
+        `;
+        adviceGrid.appendChild(article);
+      });
+    }
+
+    function renderForecast(forecast) {
+      forecastList.innerHTML = "";
+      forecast.forEach(([time, condition, rain]) => {
+        const row = document.createElement("div");
+        row.className = "forecast-row";
+        row.innerHTML = `
+          <strong>${time}</strong>
+          <span aria-hidden="true">${iconFor(condition)}</span>
+          <div class="rain-track" aria-label="${condition}, rain chance ${rain}%">
+            <div class="rain-fill" style="--rain: ${rain}%"></div>
+          </div>
+          <span>${rain}%</span>
+        `;
+        forecastList.appendChild(row);
+      });
+    }
+
+    function renderExplain(state) {
+      const scores = getScores(state.weather);
+      const reasons = [];
+
+      if (state.highRain) {
+        reasons.push(text(
+          `Rain probability is ${state.weather.rain}%, so irrigation and spraying are unsafe.`,
+          `వర్షం అవకాశం ${state.weather.rain}% ఉంది, కాబట్టి నీరు మరియు స్ప్రే సురక్షితం కాదు.`
+        ));
+      }
+      if (state.lowSoil) {
+        reasons.push(text(
+          `Soil moisture is only ${state.weather.soil}%, so controlled irrigation is suggested.`,
+          `నేల తేమ ${state.weather.soil}% మాత్రమే ఉంది, కాబట్టి నియంత్రిత నీరుపారుదల సిఫార్సు చేయబడింది.`
+        ));
+      }
+      if (state.highWind) {
+        reasons.push(text(
+          `Wind speed is ${state.weather.wind} km/h, so pesticide drift risk is high.`,
+          `గాలి వేగం ${state.weather.wind} km/h ఉంది, కాబట్టి స్ప్రే చెదిరే ప్రమాదం ఎక్కువ.`
+        ));
+      }
+      if (state.highHumidity) {
+        reasons.push(text(
+          `Humidity is ${state.weather.humidity}%, increasing disease risk for ${state.cropName}.`,
+          `తేమ ${state.weather.humidity}% ఉంది, కాబట్టి పంటలో వ్యాధి ప్రమాదం పెరుగుతుంది.`
+        ));
+      }
+      if (!reasons.length) {
+        reasons.push(text(
+          "Weather signals are moderate, so the system recommends observation before action.",
+          "వాతావరణ సూచనలు మధ్యస్థంగా ఉన్నాయి, కాబట్టి చర్యకు ముందు గమనించమని సిస్టమ్ సూచిస్తుంది."
+        ));
+      }
+
+      $("why-title").textContent = label("Why this advice?", "ఈ సలహా ఎందుకు?");
+      explainList.innerHTML = reasons.map((reason) => `<li>${reason}</li>`).join("");
+
+      const scoreItems = [
+        [label("Rain risk", "వర్షం ప్రమాదం"), scores.rain],
+        [label("Disease risk", "వ్యాధి ప్రమాదం"), scores.disease],
+        [label("Irrigation need", "నీటి అవసరం"), scores.irrigation],
+        [label("Spraying unsafe", "స్ప్రే ప్రమాదం"), scores.spraying]
+      ];
+
+      scoreGrid.innerHTML = scoreItems.map(([name, score]) => `
+        <div class="score-row">
+          <div class="score-label"><span>${name}</span><span>${score}%</span></div>
+          <div class="score-track" role="progressbar" aria-label="${name}" aria-valuenow="${score}" aria-valuemin="0" aria-valuemax="100">
+            <div class="score-fill" style="--score: ${score}%"></div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderComparison(selectedId, cropName) {
+      const scenarioKeys = ["rain", "dry", "wind"];
+      compareBody.innerHTML = panchayats.map((panchayat, index) => {
+        const weather = scenarios[scenarioKeys[index % scenarioKeys.length]];
+        const advice = comparisonAdvice(weather, cropName);
+        const marker = panchayat.id === selectedId ? " *" : "";
+
+        return `
+          <tr>
+            <td><strong>${panchayat.name}${marker}</strong><br><span class="metric-note">${panchayat.soilType}</span></td>
+            <td>${weather.rain}%</td>
+            <td>${weather.soil}%</td>
+            <td>${advice}</td>
+          </tr>
+        `;
+      }).join("");
+
+      $("compare-title").textContent = label("Nearby Panchayat comparison", "సమీప పంచాయతీల పోలిక");
+    }
+
+    function renderUniqueText() {
+      $("unique-title").textContent = label("What makes this unique", "ఇది ఎందుకు ప్రత్యేకం");
+      $("unique-one-title").textContent = label("Panchayat-level decision support", "పంచాయతీ స్థాయి నిర్ణయ సహాయం");
+      $("unique-one-body").textContent = text(
+        "The system compares nearby Panchayats instead of giving one district-level forecast.",
+        "ఒకే జిల్లా వాతావరణం కాకుండా సమీప పంచాయతీలను పోల్చి చూపిస్తుంది."
+      );
+      $("unique-two-title").textContent = label("Crop-specific action", "పంటకు ప్రత్యేకమైన చర్య");
+      $("unique-two-body").textContent = text(
+        "Weather becomes irrigation, spraying, disease-risk and field-action advice.",
+        "వాతావరణం నీరు, స్ప్రే, వ్యాధి ప్రమాదం మరియు పొలం చర్యలుగా మారుతుంది."
+      );
+      $("unique-three-title").textContent = label("Transparent decision logic", "స్పష్టమైన నిర్ణయ విధానం");
+      $("unique-three-body").textContent = text(
+        "The farmer and judge can see why each recommendation was generated.",
+        "ప్రతి సిఫార్సు ఎందుకు వచ్చిందో రైతు మరియు జడ్జ్ చూడగలరు."
+      );
+    }
+
+    function getScores(weather) {
+      const rain = clamp(weather.rain);
+      const disease = clamp(Math.round((weather.humidity * 0.62) + (weather.rain * 0.22) + (weather.soil * 0.16)));
+      const irrigation = clamp(weather.soil <= 30 ? 88 : weather.rain >= 70 ? 12 : 46);
+      const spraying = clamp(Math.max(weather.rain, weather.wind * 3));
+      return { rain, disease, irrigation, spraying };
+    }
+
+    function comparisonAdvice(weather, cropName) {
+      if (weather.rain >= 70) {
+        return text(`Avoid irrigation for ${cropName}`, `${cropName}: నీరు పెట్టవద్దు`);
+      }
+      if (weather.soil <= 30) {
+        return text(`Irrigate ${cropName} carefully`, `${cropName}: జాగ్రత్తగా నీరు పెట్టండి`);
+      }
+      if (weather.wind >= 28) {
+        return text(`Avoid spraying ${cropName}`, `${cropName}: స్ప్రే చేయవద్దు`);
+      }
+      return text(`Monitor ${cropName} field`, `${cropName}: పొలం గమనించండి`);
+    }
+
+    function clamp(value) {
+      return Math.max(0, Math.min(100, value));
+    }
+
+    function buildAlertText(weather, cropName, crop, panchayatName) {
+      if (currentLang === "te") {
+        const cropTe = crop.teluguCrop;
+        if (weather.rain >= 70) {
+          return `${panchayatName} పంచాయతీలో రాబోయే 6 గంటల్లో భారీ వర్షం వచ్చే అవకాశం ఉంది. ${cropTe} పంటకు ఈరోజు నీరు పెట్టవద్దు. స్ప్రే చేయవద్దు మరియు డ్రైనేజీ చూడండి.`;
+        }
+        if (weather.soil <= 30) {
+          return `${panchayatName} పంచాయతీలో నేల తేమ తక్కువగా ఉంది. ${cropTe} పంటకు ఉదయం లేదా సాయంత్రం నియంత్రిత నీరుపారుదల చేయండి.`;
+        }
+        return `${panchayatName} పంచాయతీలో గాలి వేగం ఎక్కువగా ఉంది. ${cropTe} పంటలో స్ప్రే వాయిదా వేసి చిన్న మొక్కల ఆధారాలు చూడండి.`;
+      }
+
+      if (weather.rain >= 70) {
+        return `Heavy rainfall is expected in ${panchayatName} Panchayat between 2 PM and 7 PM. Do not irrigate ${cropName} fields today. Avoid pesticide spraying and check drainage channels.`;
+      }
+      if (weather.soil <= 30) {
+        return `Soil moisture is low in ${panchayatName} Panchayat. Controlled irrigation may be required for ${cropName}, preferably during cooler morning or evening hours.`;
+      }
+      return `Strong winds are expected in ${panchayatName} Panchayat. Avoid spraying ${cropName} fields today and secure young crop supports.`;
+    }
+
+    function iconFor(condition) {
+      if (condition.includes("Rain")) return "☔";
+      if (condition.includes("Wind") || condition.includes("Breezy")) return "↝";
+      if (condition.includes("Sunny") || condition.includes("Hot")) return "☀";
+      return "☁";
+    }
+
+    function headlineTelugu(weather) {
+      if (weather.rain >= 70) return "భారీ వర్షం ప్రమాదం ఎక్కువగా ఉంది";
+      if (weather.soil <= 30) return "నేల తేమ తక్కువగా ఉంది";
+      return "బలమైన గాలి హెచ్చరిక";
+    }
+
+    function bodyTelugu(weather) {
+      if (weather.rain >= 70) return "వర్షం ముగిసి ఆకులు ఎండే వరకు నీరుపారుదల మరియు స్ప్రేను నివారించండి.";
+      if (weather.soil <= 30) return "పంట దశను బట్టి ఉదయం లేదా సాయంత్రం నీరుపారుదల అవసరం కావచ్చు.";
+      return "గాలి వల్ల స్ప్రే చెదిరే ప్రమాదం ఉంది. ఈరోజు స్ప్రే చేయవద్దు.";
+    }
+
+    function riskLabel(risk) {
+      if (currentLang !== "te") return risk;
+      return risk === "HIGH" ? "ఎక్కువ" : "మధ్యస్థం";
+    }
+
+    function text(en, te) {
+      return currentLang === "te" ? te : en;
+    }
+
+    function label(en, te) {
+      return currentLang === "te" ? te : en;
+    }
+
+    function loadVoices() {
+      if (!("speechSynthesis" in window)) {
+        updateVoiceStatus("unsupported");
+        return;
+      }
+
+      availableVoices = window.speechSynthesis.getVoices();
+      const preferredVoice = chooseVoice();
+      const selectedValue = voiceSelect.value;
+
+      voiceSelect.innerHTML = `<option value="">${label("Auto-select voice", "వాయిస్ ఆటో ఎంపిక")}</option>`;
+      availableVoices
+        .filter((voice) => isUsefulVoice(voice))
+        .forEach((voice) => {
+          const option = document.createElement("option");
+          option.value = voice.name;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          voiceSelect.appendChild(option);
+        });
+
+      if (selectedValue && availableVoices.some((voice) => voice.name === selectedValue)) {
+        voiceSelect.value = selectedValue;
+      } else if (preferredVoice) {
+        voiceSelect.value = "";
+      }
+
+      updateVoiceStatus();
+    }
+
+    function isUsefulVoice(voice) {
+      const lang = voice.lang.toLowerCase();
+      const name = voice.name.toLowerCase();
+      if (currentLang === "te") {
+        return lang.includes("te") || lang.includes("in") || name.includes("telugu") || name.includes("india");
+      }
+      return lang.includes("en-in") || lang.includes("en-us") || lang.includes("en-gb") || name.includes("india");
+    }
+
+    function chooseVoice() {
+      const manual = voiceSelect.value;
+      if (manual) {
+        return availableVoices.find((voice) => voice.name === manual) || null;
+      }
+
+      if (currentLang === "te") {
+        return availableVoices.find((voice) => voice.lang.toLowerCase() === "te-in")
+          || availableVoices.find((voice) => voice.lang.toLowerCase().startsWith("te"))
+          || availableVoices.find((voice) => voice.name.toLowerCase().includes("telugu"))
+          || availableVoices.find((voice) => voice.lang.toLowerCase().includes("in"))
+          || null;
+      }
+
+      return availableVoices.find((voice) => voice.lang.toLowerCase() === "en-in")
+        || availableVoices.find((voice) => voice.lang.toLowerCase().startsWith("en"))
+        || null;
+    }
+
+    function updateVoiceStatus(status) {
+      if (status === "unsupported") {
+        $("voice-status").textContent = label(
+          "Voice alerts are not supported in this browser.",
+          "ఈ బ్రౌజర్‌లో వాయిస్ హెచ్చరికలు అందుబాటులో లేవు."
+        );
+        return;
+      }
+
+      const voice = chooseVoice();
+      if (currentLang === "te") {
+        $("voice-status").textContent = voice
+          ? `Telugu mode active. Selected voice: ${voice.name} (${voice.lang}).`
+          : "Telugu mode active. If Telugu audio is not clear, install/enable a Telugu voice in Windows language settings.";
+        return;
+      }
+
+      $("voice-status").textContent = voice
+        ? `Selected voice: ${voice.name} (${voice.lang}).`
+        : "Voice uses your browser voices. Telugu mode will prefer Telugu or Indian voices when available.";
+    }
+
+    function speakAlert() {
+      const message = $("message-text").textContent;
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = currentLang === "te" ? "te-IN" : "en-IN";
+      const voice = chooseVoice();
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      }
+      utterance.rate = 0.92;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    async function copyAlert() {
+      const textToCopy = $("message-text").textContent;
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        $("copy").textContent = currentLang === "te" ? "కాపీ అయింది" : "Copied";
+        setTimeout(() => {
+          $("copy").textContent = currentLang === "te" ? "హెచ్చరికను కాపీ చేయండి" : "Copy alert text";
+        }, 1300);
+      } catch (error) {
+        $("copy").textContent = currentLang === "te" ? "కాపీ చేయలేకపోయాం" : "Copy failed";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "farmsmart-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "frontend": "node server.js",
+    "backend": "cd backend && uvicorn app.main:app --reload --port 8000"
+  },
+  "dependencies": {
+    "firebase": "^10.13.2"
+  },
+  "devDependencies": {}
+}

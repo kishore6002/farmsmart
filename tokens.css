@@ -1,0 +1,31 @@
+/* Hallmark tokens · FarmSmart auth redesign */
+:root {
+  --color-paper: oklch(97% 0.014 112);
+  --color-paper-2: oklch(94% 0.018 112);
+  --color-ink: oklch(19% 0.026 156);
+  --color-ink-2: oklch(49% 0.023 154);
+  --color-rule: oklch(86% 0.018 118);
+  --color-accent: oklch(72% 0.14 84);
+  --color-accent-2: oklch(55% 0.09 178);
+  --color-focus: oklch(72% 0.14 84);
+  --font-display: "Nirmala UI", "Aptos Display", "Segoe UI", sans-serif;
+  --font-body: "Nirmala UI", "Aptos", "Segoe UI", sans-serif;
+  --font-outlier: "Cascadia Mono", "JetBrains Mono", ui-monospace, monospace;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5625rem;
+  --text-display: clamp(2.35rem, 4vw + 0.4rem, 4.45rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-short: 180ms;
+  --dur-medium: 260ms;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+}

@@ -1,0 +1,8 @@
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+backend/data/store.json
+backend/data/locations.json
+backend/data/official_locations.csv
+.env
